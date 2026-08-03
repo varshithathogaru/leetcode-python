@@ -1,6 +1,6 @@
 # 🚀 Daily Coding Log | Day 1
 
-## Problem
+## Problem no 2347
 
 **Total Distance Traveled**
 
