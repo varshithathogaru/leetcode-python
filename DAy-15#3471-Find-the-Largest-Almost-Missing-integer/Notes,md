@@ -1,1 +1,209 @@
 
+# Notes — LeetCode 3471
+
+## Problem Pattern
+
+**Sliding Window + Set + HashMap**
+
+We need to identify numbers that occur in **exactly one window of size `k`**.
+
+---
+
+## Important Difference
+
+Do NOT simply count every occurrence in the array.
+
+We need:
+
+```text
+Number of windows containing x
+```
+
+not:
+
+```text
+Total occurrences of x
+```
+
+---
+
+## Why Set?
+
+Suppose:
+
+```text
+window = [5, 5, 7]
+```
+
+Without a set:
+
+```text
+5 → counted twice
+7 → counted once
+```
+
+But this is wrong because `5` belongs to only **one window**.
+
+Using:
+
+```python
+set(window)
+```
+
+gives:
+
+```text
+{5, 7}
+```
+
+So both are counted once for that window.
+
+---
+
+## Core Logic
+
+```python
+count = {}
+
+for i in range(len(nums) - k + 1):
+
+    window = set(nums[i:i+k])
+
+    for x in window:
+        count[x] = count.get(x, 0) + 1
+```
+
+After this:
+
+```python
+count[x] == 1
+```
+
+means `x` is almost missing.
+
+Then:
+
+```python
+ans = max(ans, x)
+```
+
+finds the largest one.
+
+---
+
+## Dry Run
+
+Example:
+
+```text
+nums = [1, 2, 3, 1, 4]
+k = 2
+```
+
+Windows:
+
+```text
+[1, 2] → {1, 2}
+[2, 3] → {2, 3}
+[3, 1] → {1, 3}
+[1, 4] → {1, 4}
+```
+
+Counts across windows:
+
+```text
+1 → 3
+2 → 2
+3 → 2
+4 → 1
+```
+
+Only `4` occurs in exactly one window.
+
+Therefore:
+
+```text
+answer = 4
+```
+
+---
+
+## Pattern to Remember
+
+Whenever a problem says:
+
+> "appears in exactly one subarray/window"
+
+Think:
+
+```text
+Generate each window
+       ↓
+Make window unique
+       ↓
+Count each element once per window
+       ↓
+Find frequency == 1
+       ↓
+Take maximum
+```
+
+---
+
+## Complexity
+
+```text
+Time:  O(nk)
+Space: O(k + u)
+```
+
+where:
+
+* `n` = length of array
+* `k` = window size
+* `u` = number of distinct values
+
+---
+
+## Mistake to Avoid
+
+❌ Counting directly from `nums`
+
+```python
+for x in nums:
+    count[x] += 1
+```
+
+This counts total array occurrences, which is not what the problem asks.
+
+✅ Count unique values inside every window.
+
+```python
+window = set(nums[i:i+k])
+```
+
+---
+
+## Interview Question
+
+### Why can't we simply use a normal frequency dictionary?
+
+Because the same number may appear multiple times inside one window.
+
+For example:
+
+```text
+[2, 2, 2]
+```
+
+The number `2` appears three times, but it occurs in only **one window**.
+
+A set removes these duplicates before updating the window frequency.
+
+---
+
+## Key Takeaway
+
+**Count window appearances, not element appearances.**
+
+The `set` is the key idea that makes the counting correct.
